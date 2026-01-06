@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>FROST TOUCH PRO</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00f2ff; /* Cyan */
+            --secondary: #0072ff; /* Blue */
+            --dark: #0f172a;
+            --card-bg: #1e293b;
+            --text: #f8fafc;
+            --green: #22c55e;
+            --yellow: #f59e0b;
+            --red: #ef4444;
+            --font: 'Segoe UI', sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: var(--font);
+            background-color: var(--dark);
+            color: var(--text);
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: var(--dark);
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #334155;
+            z-index: 50;
+        }
+        .logo { 
+            font-weight: 800; font-size: 1.2rem; 
+            background: linear-gradient(90deg, #00f2ff, #00c6ff);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            font-style: italic; text-transform: uppercase;
+        }
+        .sos-btn {
+            background: #ff004c; color: white; border: none; padding: 8px 20px;
+            border-radius: 30px; font-weight: bold; font-size: 0.9rem;
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 76, 0.4); animation: pulse-red 2s infinite;
+        }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(255, 0, 76, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(255, 0, 76, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 0, 76, 0); } }
+
+        /* MAIN CONTENT */
+        main { flex: 1; overflow-y: auto; padding: 20px; padding-bottom: 90px; }
+        .tab-content { display: none; animation: fadeEffect 0.4s; }
+        .tab-content.active { display: block; }
+        @keyframes fadeEffect { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* SCAN TAB */
+        .camera-container {
+            position: relative; width: 100%; height: 380px;
+            background: black; border-radius: 20px; border: 2px solid #334155;
+            overflow: hidden; display: flex; justify-content: center; align-items: center; margin-bottom: 25px;
+        }
+        video { width: 100%; height: 100%; object-fit: cover; }
+        .scan-overlay {
+            position: absolute; width: 140px; height: 140px;
+            border: 2px dashed #00f2ff; border-radius: 20px;
+            box-shadow: 0 0 0 1000px rgba(0,0,0,0.8); z-index: 10;
+        }
+        
+        .real-scan-btn {
+            width: 100%; padding: 16px;
+            background: linear-gradient(90deg, #00c6ff, #0072ff);
+            color: white; border: none; border-radius: 50px;
+            font-size: 1.1rem; font-weight: 800; letter-spacing: 1px;
+            box-shadow: 0 0 20px rgba(0, 198, 255, 0.5);
+            cursor: pointer; margin-bottom: 30px; transition: transform 0.2s;
+            text-transform: uppercase;
+        }
+        .real-scan-btn:active { transform: scale(0.98); }
+
+        .sim-section { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 15px; }
+        .sim-title { text-align: center; color: #94a3b8; font-size: 0.85rem; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+        .sim-btn-row { display: flex; gap: 10px; }
+        .sim-btn {
+            flex: 1; padding: 12px 5px; border: none; border-radius: 8px;
+            color: black; font-weight: bold; font-size: 0.8rem; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;
+        }
+        .btn-safe { background-color: #22c55e; color: #052e16; }
+        .btn-caution { background-color: #f59e0b; color: #451a03; }
+        .btn-danger { background-color: #ef4444; color: #450a0a; }
+
+        /* WEATHER TAB */
+        .weather-title { font-weight: bold; font-size: 1.2rem; margin-bottom: 15px; color: white; }
+        
+        .weather-card {
+            background: linear-gradient(90deg, #2dd4bf, #0ea5e9);
+            border-radius: 20px; color: white; position: relative;
+            overflow: hidden; box-shadow: 0 10px 20px rgba(14, 165, 233, 0.2); margin-bottom: 25px;
+            display: flex; flex-direction: column; justify-content: space-between;
+            min-height: 200px;
+        }
+        
+        .wc-header {
+            padding: 20px 25px 0 25px;
+            display: flex; justify-content: space-between; align-items: flex-start;
+        }
+        .wc-location { font-size: 1.1rem; font-weight: 600; display: flex; gap: 5px; align-items: center; }
+        .wc-date { font-size: 0.8rem; opacity: 0.9; margin-top: 5px; }
+        .wc-icon { font-size: 2rem; }
+
+        .wc-temp {
+            font-size: 4rem; font-weight: bold; text-align: center;
+            margin: 10px 0;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .wc-footer {
+            background: rgba(0, 0, 0, 0.15);
+            padding: 10px 25px;
+            display: flex; justify-content: space-between;
+            font-size: 0.9rem;
+        }
+
+        /* Hourly Forecast Box */
+        .hourly-title { font-size: 1rem; font-weight: bold; margin-bottom: 10px; }
+        .hourly-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 10px; scrollbar-width: none; }
+        .hour-item {
+            background: #1e293b; 
+            min-width: 70px; padding: 15px 10px; 
+            border-radius: 10px; text-align: center; 
+            border: 1px solid #334155;
+            display: flex; flex-direction: column; gap: 8px; align-items: center;
+        }
+        .h-time { font-size: 0.8rem; color: #94a3b8; }
+        .h-emoji { font-size: 1.5rem; }
+        .h-temp { font-weight: bold; font-size: 1.1rem; }
+
+        /* TIPS TAB */
+        .tip-card { background: var(--card-bg); padding: 15px; margin-bottom: 15px; border-radius: 10px; border-left: 4px solid var(--primary); font-size: 0.95rem; line-height: 1.5; }
+        
+        /* RECORDS & BADGES */
+        .badges-title { font-weight: bold; font-size: 1.1rem; margin-bottom: 15px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px;}
+        .badges-area {
+            display: flex; justify-content: space-around; padding: 20px 0;
+            margin-bottom: 30px; border-bottom: 1px solid #334155;
+        }
+        .badge-container { display: flex; flex-direction: column; align-items: center; position: relative; }
+        .badge { 
+            width: 80px; height: 80px; display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; border: 3px solid #334155; background: var(--card-bg);
+            color: #64748b; font-size: 2rem; transition: all 0.4s ease;
+        }
+        .badge-name { margin-top: 10px; font-size: 0.9rem; color: #94a3b8; }
+        
+        .badge.unlocked { 
+            border-color: #00f2ff; color: white;
+            box-shadow: 0 0 25px rgba(0, 242, 255, 0.6), inset 0 0 15px rgba(0, 242, 255, 0.3);
+            background: linear-gradient(135deg, rgba(0, 242, 255, 0.2), rgba(0, 114, 255, 0.2));
+            transform: scale(1.1);
+        }
+        .badge-check {
+            position: absolute; top: 0; right: 0; background: var(--green); color: white;
+            width: 24px; height: 24px; border-radius: 50%; display: none;
+            align-items: center; justify-content: center; font-size: 0.8rem; border: 2px solid var(--dark);
+        }
+        .badge.unlocked + .badge-check { display: flex; }
+
+        .voucher { background: white; color: #333; padding: 15px; border-radius: 10px; margin-bottom: 10px; display: none; justify-content: space-between; align-items: center; border-left: 5px solid var(--green); }
+        .history-item { display: flex; justify-content: space-between; padding: 12px; border-bottom: 1px solid #334155; }
+
+        /* NAVBAR */
+        nav {
+            position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid #334155;
+            display: flex; justify-content: space-around; padding: 12px 0; z-index: 100;
+        }
+        .nav-item { color: #64748b; text-align: center; font-size: 0.75rem; flex: 1; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { display: block; font-size: 1.4rem; margin-bottom: 4px; }
+
+        /* MODALS */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 200; display: none; justify-content: center; align-items: center; padding: 20px; }
+        
+        /* Result Box (Modified for Dynamic Color) */
+        .modal-box { 
+            background: var(--card-bg); width: 100%; max-width: 350px; 
+            padding: 25px; border-radius: 20px; text-align: center; 
+            border: 3px solid #475569; /* Base border */
+            position: relative; transition: all 0.3s ease;
+        }
+        
+        #ach-modal .modal-box {
+            background: linear-gradient(135deg, #1e293b, #0f172a); border: 2px solid #00f2ff;
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.3);
+        }
+        .ach-icon { font-size: 4rem; color: #ffd700; margin-bottom: 15px; animation: bounce 1s infinite; }
+        @keyframes bounce { 0%, 100% {transform: translateY(0);} 50% {transform: translateY(-10px);} }
+
+        #process-canvas { display: none; }
+        .blink-red { animation: blink 0.5s infinite; color: var(--red); }
+        @keyframes blink { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">FROST TOUCH</div>
+        <button class="sos-btn" onclick="openModal('sos-modal')">
+            <i class="fa-solid fa-triangle-exclamation"></i> SOS
+        </button>
+    </header>
+
+    <main>
+        <div id="tab-scan" class="tab-content active">
+            <div class="camera-container">
+                <video id="video" autoplay playsinline></video>
+                <div class="scan-overlay"></div>
+                <div id="cam-msg" style="position:absolute; color:white; font-size:0.8rem;">Loading Camera...</div>
+            </div>
+
+            <button class="real-scan-btn" onclick="analyzeFrame()">SCAN TOWEL</button>
+
+            <div class="sim-section">
+                <div class="sim-title">Fast Demonstration Controls</div>
+                <div class="sim-btn-row">
+                    <button class="sim-btn btn-safe" onclick="processResult('safe')">Dark Color<br>(Safe)</button>
+                    <button class="sim-btn btn-caution" onclick="processResult('caution')">Yellow/Pale<br>(Caution)</button>
+                    <button class="sim-btn btn-danger" onclick="processResult('danger')">White/Faded<br>(Danger)</button>
+                </div>
+            </div>
+            <canvas id="process-canvas"></canvas>
+        </div>
+
+        <div id="tab-weather" class="tab-content">
+            <div class="weather-title">Malaysia Live Weather</div>
+            
+            <div class="weather-card">
+                <div class="wc-header">
+                    <div>
+                        <div class="wc-location"><i class="fa-solid fa-location-dot"></i> Kuala Lumpur</div>
+                        <div class="wc-date" id="w-date">Loading...</div>
+                    </div>
+                    <div class="wc-icon" id="w-main-icon"><i class="fa-solid fa-sun"></i></div>
+                </div>
+                
+                <div class="wc-temp" id="w-temp">--°C</div>
+                
+                <div class="wc-footer">
+                    <div><i class="fa-solid fa-droplet"></i> Humidity: <span id="w-hum">--</span>%</div>
+                    <div><i class="fa-solid fa-wind"></i> Wind: <span id="w-wind">--</span>km/h</div>
+                </div>
+            </div>
+
+            <div class="hourly-title">Hourly Forecast</div>
+            <div class="hourly-scroll" id="hourly-list">
+                </div>
+        </div>
+
+        <div id="tab-tips" class="tab-content">
+            <h3>Heat Safety</h3>
+            <div class="tip-card">💧 <b>Early Hydration:</b> Drink 500ml of water 2 hours before exercise. Don't wait until you are thirsty.</div>
+            <div class="tip-card">🤒 <b>Early Signs:</b> Hot, dry skin, rapid pulse, dizziness and nausea are the common signs of heat stroke.</div>
+            <div class="tip-card">❄️ <b>Cooling Zones:</b> Place towel on the neck, armpits, groin and wrists which are the pulse points for rapid cooling.</div>
+            <div class="tip-card">📈 <b>Acclimatization:</b> Gradually increase training intensity over 7-14 days to let your body adapt to the heat.</div>
+            <div class="tip-card">🧪 <b>The Urine Test:</b> Check your urine color. Clear/Pale Yellow = Good. Dark Yellow = Dehydrated.</div>
+            <div class="tip-card">👕 <b>Cooling Gear:</b> Wear light-colored, loose-fitting clothing and use your Frost Touch towel during breaks.</div>
+        </div>
+
+        <div id="tab-record" class="tab-content">
+            <div class="badges-title">ACHIEVEMENTS</div>
+            <div class="badges-area">
+                <div class="badge-container">
+                    <div class="badge" id="badge-beginner"><i class="fa-solid fa-flag"></i></div>
+                    <div class="badge-check"><i class="fa-solid fa-check"></i></div>
+                    <div class="badge-name">Beginner</div>
+                </div>
+                <div class="badge-container">
+                    <div class="badge" id="badge-ice"><i class="fa-solid fa-snowflake"></i></div>
+                    <div class="badge-check"><i class="fa-solid fa-check"></i></div>
+                    <div class="badge-name">Ice Master</div>
+                </div>
+                <div class="badge-container">
+                    <div class="badge" id="badge-survivor"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="badge-check"><i class="fa-solid fa-check"></i></div>
+                    <div class="badge-name">Survivor</div>
+                </div>
+            </div>
+
+            <h3>My Vouchers</h3>
+            <div id="no-vouchers" style="text-align:center; color:gray; font-size:0.9rem;">Scan to unlock rewards!</div>
+            
+            <div class="voucher" id="v-beginner">
+                <div><b>Free 100 PLUS</b><br><small>Beginner Reward</small></div>
+                <button style="background:#22c55e; color:white; border:none; padding:5px 12px; border-radius:4px;">CLAIM</button>
+            </div>
+            <div class="voucher" id="v-ice">
+                <div><b>5% OFF Decathlon</b><br><small>Ice Master Reward</small></div>
+                <button style="background:#22c55e; color:white; border:none; padding:5px 12px; border-radius:4px;">CLAIM</button>
+            </div>
+            <div class="voucher" id="v-survivor">
+                <div><b>10% OFF Al-Ikhsan</b><br><small>Survivor Reward</small></div>
+                <button style="background:#22c55e; color:white; border:none; padding:5px 12px; border-radius:4px;">CLAIM</button>
+            </div>
+
+            <h3>History</h3>
+            <div id="history-list"><div style="text-align:center; color:gray;">No scans yet.</div></div>
+        </div>
+    </main>
+
+    <nav>
+        <div class="nav-item active" onclick="nav('scan', this)"><i class="fa-solid fa-qrcode"></i> Scan</div>
+        <div class="nav-item" onclick="nav('weather', this)"><i class="fa-solid fa-cloud-sun"></i> Weather</div>
+        <div class="nav-item" onclick="nav('tips', this)"><i class="fa-solid fa-lightbulb"></i> Tips</div>
+        <div class="nav-item" onclick="nav('record', this)"><i class="fa-solid fa-clipboard-list"></i> Record</div>
+    </nav>
+
+    <div id="res-modal" class="modal">
+        <div id="res-box" class="modal-box">
+            <div id="res-icon" style="font-size:5rem; margin-bottom:10px;"><i class="fa-solid fa-face-smile"></i></div>
+            <h2 id="res-title">OPTIMUM COOL</h2>
+            <h4 id="res-status" style="margin:5px 0;">Safe</h4>
+            <div id="res-tips" style="text-align:left; font-size:0.9rem; margin-top:15px; color:#cbd5e1;"></div>
+            <br>
+            <button onclick="closeModal('res-modal')" style="background:#334155; color:white; border:none; padding:10px 30px; border-radius:20px;">Close</button>
+        </div>
+    </div>
+
+    <div id="ach-modal" class="modal">
+        <div class="modal-box">
+            <div class="ach-icon"><i class="fa-solid fa-trophy"></i></div>
+            <h2 style="color:#00f2ff; margin-bottom:5px;">NEW ACHIEVEMENT UNLOCKED!</h2>
+            <p style="color:white; margin-bottom:20px;">You have unlocked a new badge & voucher.</p>
+            <button onclick="closeModal('ach-modal'); nav('record', document.querySelector('.nav-item:last-child'))" style="background:#00f2ff; color:#000; border:none; padding:12px 30px; border-radius:25px; font-weight:bold;">GO TO REWARDS</button>
+        </div>
+    </div>
+
+    <div id="sos-modal" class="modal" style="background:rgba(220,20,60,0.9);">
+        <div class="modal-box" style="border:2px solid white;">
+            <i class="fa-solid fa-bell" style="font-size:4rem; color:var(--red); margin-bottom:10px;"></i>
+            <h2 style="color:var(--red); margin:0;">EMERGENCY</h2>
+            <a href="tel:999" style="display:block; width:100%; background:var(--red); color:white; padding:15px; margin:10px 0; border-radius:10px; text-decoration:none; font-weight:bold;">CALL 999</a>
+            <button onclick="window.open('https://www.google.com/maps/search/klinik+kesihatan+near+me')" style="width:100%; background:#2563eb; color:white; padding:15px; border:none; border-radius:10px; font-weight:bold;">FIND NEAREST CLINIC</button>
+            <br><br>
+            <button onclick="closeModal('sos-modal')" style="background:transparent; color:white; border:none;">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. CAMERA LOGIC ---
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('process-canvas');
+        const ctx = canvas.getContext('2d');
+
+        async function initCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                video.srcObject = stream;
+                document.getElementById('cam-msg').style.display = 'none';
+            } catch (e) {
+                document.getElementById('cam-msg').innerText = "Camera Access Denied";
+            }
+        }
+        initCamera();
+
+        function analyzeFrame() {
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+            const cx = Math.floor(canvas.width / 2);
+            const cy = Math.floor(canvas.height / 2);
+            const frame = ctx.getImageData(cx - 50, cy - 50, 100, 100);
+            const data = frame.data;
+
+            let totalBright = 0;
+            for(let i=0; i<data.length; i+=4) totalBright += (data[i] + data[i+1] + data[i+2]) / 3;
+            const avgBright = totalBright / (data.length / 4);
+
+            if(avgBright < 85) processResult('safe');
+            else if(avgBright > 170) processResult('danger');
+            else processResult('caution');
+        }
+
+        // --- 2. LOGIC, BADGES & POPUP ---
+        let safeCount = 0; 
+        let totalScans = 0; 
+        let history = [];
+
+        function processResult(type) {
+            let res = {};
+            if(type === 'safe') {
+                res = { 
+                    title:"OPTIMUM COOL", 
+                    status:"Safe / Ready", 
+                    color:"#22c55e", 
+                    icon:"fa-face-smile", 
+                    danger:false, 
+                    tips:["Body temperature is stable.", "Maintain your current pace.", "Stay hydrated with small sips."] 
+                };
+                safeCount++;
+            } else if(type === 'caution') {
+                res = { 
+                    title:"HEAT CAUTION", 
+                    status:"Warning / Elevated", 
+                    color:"#f59e0b", 
+                    icon:"fa-face-meh", 
+                    danger:false, 
+                    tips:["Body heat is rising. Slow down.", "Snap the towel to reactivate cooling.", "Drink water immediately."] 
+                };
+            } else {
+                res = { 
+                    title:"HIGH HEAT WARNING", 
+                    status:"Danger / Critical", 
+                    color:"#ef4444", 
+                    icon:"fa-face-dizzy", 
+                    danger:true, 
+                    tips:["STOP training immediately!", "Apply towel to neck & forehead.", "Drink electrolytes/isotonic water now."] 
+                };
+            }
+
+            // Update UI
+            const boxEl = document.getElementById('res-box');
+            const iconEl = document.getElementById('res-icon');
+            
+            // Set Dynamic Border & Glow for the Box
+            boxEl.style.borderColor = res.color;
+            boxEl.style.boxShadow = `0 0 20px ${res.color}`;
+
+            // Set Icon
+            iconEl.innerHTML = `<i class="fa-solid ${res.icon}"></i>`;
+            iconEl.style.color = res.color;
+            
+            if(res.danger) iconEl.className = "blink-red";
+            else iconEl.className = "";
+
+            document.getElementById('res-title').innerText = res.title;
+            document.getElementById('res-title').style.color = res.color;
+            document.getElementById('res-status').innerText = res.status;
+            document.getElementById('res-tips').innerHTML = res.tips.map(t=>`<div>• ${t}</div>`).join('');
+            
+            openModal('res-modal');
+            addHistory(res.title, res.color);
+            totalScans++;
+            checkBadges();
+        }
+
+        function addHistory(title, color) {
+            const time = new Date().toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            history.unshift({time, title, color});
+            const list = document.getElementById('history-list');
+            list.innerHTML = '';
+            history.forEach(h => {
+                list.innerHTML += `<div class="history-item" style="border-left:5px solid ${h.color}"><strong>${h.time}</strong><span style="color:${h.color}">${h.title}</span></div>`;
+            });
+        }
+
+        function checkBadges() {
+            let newlyUnlocked = false;
+
+            // 1. Beginner (1 scan total)
+            const bBadge = document.getElementById('badge-beginner');
+            if(totalScans >= 1 && !bBadge.classList.contains('unlocked')) {
+                bBadge.classList.add('unlocked');
+                document.getElementById('v-beginner').style.display = 'flex';
+                newlyUnlocked = true;
+            }
+
+            // 2. Ice Master (3 safe scans)
+            const iBadge = document.getElementById('badge-ice');
+            if(safeCount >= 3 && !iBadge.classList.contains('unlocked')) {
+                iBadge.classList.add('unlocked');
+                document.getElementById('v-ice').style.display = 'flex';
+                newlyUnlocked = true;
+            }
+
+            // 3. Survivor (7 scans total)
+            const sBadge = document.getElementById('badge-survivor');
+            if(totalScans >= 7 && !sBadge.classList.contains('unlocked')) {
+                sBadge.classList.add('unlocked');
+                document.getElementById('v-survivor').style.display = 'flex';
+                newlyUnlocked = true;
+            }
+
+            if(totalScans >= 1) document.getElementById('no-vouchers').style.display = 'none';
+
+            if(newlyUnlocked) {
+                setTimeout(() => {
+                    closeModal('res-modal');
+                    openModal('ach-modal');
+                }, 800);
+            }
+        }
+
+        // --- 3. WEATHER API ---
+        function getWeatherEmoji(code) {
+            if (code <= 3) return '☀️'; 
+            if (code <= 48) return '🌫️'; 
+            if (code <= 67) return '🌧️'; 
+            if (code <= 77) return '❄️'; 
+            if (code <= 82) return '🌦️'; 
+            if (code >= 95) return '⛈️'; 
+            return '☁️';
+        }
+
+        async function fetchWeather() {
+            const url = "https://api.open-meteo.com/v1/forecast?latitude=3.139&longitude=101.6869&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weathercode&hourly=temperature_2m,weathercode";
+            try {
+                const res = await fetch(url);
+                const data = await res.json();
+                
+                document.getElementById('w-temp').innerText = Math.round(data.current.temperature_2m) + "°C";
+                document.getElementById('w-hum').innerText = data.current.relative_humidity_2m + "%";
+                document.getElementById('w-wind').innerText = data.current.wind_speed_10m + "km/h";
+                document.getElementById('w-main-icon').innerHTML = getWeatherEmoji(data.current.weathercode);
+                
+                const now = new Date();
+                const days = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+                const timeStr = now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+                document.getElementById('w-date').innerText = `${days[now.getDay()]} ${timeStr}`;
+
+                const list = document.getElementById('hourly-list');
+                list.innerHTML = "";
+                const startH = now.getHours();
+                for(let i=startH; i<startH+24; i++) {
+                    const temp = Math.round(data.hourly.temperature_2m[i%24]);
+                    const code = data.hourly.weathercode[i%24];
+                    const emoji = getWeatherEmoji(code);
+                    list.innerHTML += `
+                        <div class="hour-item">
+                            <span class="h-time">${i%24}:00</span>
+                            <span class="h-emoji">${emoji}</span>
+                            <span class="h-temp">${temp}°</span>
+                        </div>`;
+                }
+            } catch(e) { document.getElementById('w-date').innerText = "Offline"; }
+        }
+        fetchWeather();
+
+        // --- 4. UTILS ---
+        function nav(id, el) {
+            document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+            document.getElementById('tab-'+id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+            if(el) el.classList.add('active');
+        }
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    </script>
+</body>
+</html>
